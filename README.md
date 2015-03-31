@@ -54,7 +54,7 @@ They can be installed on a separate computer to operate the system:
 ## Server
 The required packages can be installed on the shell:
 ```shell
-yum install mysql mysql-server python python-devel python-tornado MySQL-python python-sqlobject python-requests
+yum install mariadb mariadb-server python python-devel python-tornado MySQL-python python-sqlobject python-requests
 ```
 
 alternatively you can also use a python virtual env:
@@ -72,7 +72,7 @@ pip install tornado==3.0.2 sqlobject MySQL-python requests psutil formencode sim
 
 Connect to your database:
 ```shell
-service mysqld start
+service mariadb start
 mysql -u root -p
 ```
 
