@@ -72,7 +72,8 @@ pip install tornado==3.0.2 sqlobject MySQL-python requests psutil formencode sim
 
 Connect to your database:
 ```shell
-service mariadb start
+systemctl enable mariadb
+systemctl start mariadb
 mysql -u root -p
 ```
 
