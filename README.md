@@ -96,9 +96,9 @@ git checkout https://github.com/mikrosimage/OpenRenderManagement.git
 mkdir /opt/puli
 mkdir /opt/puli/conf
 mkdir /opt/puli/logs
-cp -R ~/OpenRenderManagement/Puli/src/octopus/ /opt/puli/
-cp -R ~/OpenRenderManagement/Puli/scripts/ /opt/puli/
-cp -R ~/OpenRenderManagement/Puli/etc/puli /opt/puli/conf/
+cp -R ~/OpenRenderManagement/src/octopus/ /opt/puli/
+cp -R ~/OpenRenderManagement/scripts/ /opt/puli/
+cp -R ~/OpenRenderManagement/etc/puli /opt/puli/conf/
 export PYTHONPATH=/opt/puli:$PYTHONPATH
 ```
 
