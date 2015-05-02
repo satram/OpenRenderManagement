@@ -117,7 +117,7 @@ DB_URL = "mysql://puliuser:yourpasswd@127.0.0.1/pulidb"
 
 To launch the dispatcher, execute the following command in a shell:
 
-    python /opt/puli/scripts/dispatcherd.py --debug --console
+    python /opt/puli/octopus/dispatcherd.py --debug --console
 
 Upon the first execution, Puli will create the appropriate tables in the database.
 
@@ -147,7 +147,7 @@ yum install python-tornado python-requests python-psutil
 Launch:
 ```
 export PYTHONPATH=/opt/puli:$PYTHONPATH
-python /opt/puli/scripts/workerd.py --debug --console --server 192.168.1.2 --serverport 8004
+python /opt/puli/octopus/workerd.py --debug --console --server 192.168.1.2 --serverport 8004
 ```
 
 
