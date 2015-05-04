@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 try:
     # When using rez, "package" module is located outside the src folder.
     # It is only available for import if rez is used to resolve env.
@@ -14,12 +14,8 @@ setup(
     author='acs',
     author_email='opensource@mikrosimage.eu',
     license='MIT',
-    packages=['octopus', 'puliclient', 'pulitools'],
-    package_dir={
-        'octopus': 'src/octopus',
-        'puliclient': 'src/puliclient',
-        'pulitools': 'src/pulitools',
-    },
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
     zip_safe=False,
     install_requires=[
         'tornado',
