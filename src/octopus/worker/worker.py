@@ -276,7 +276,12 @@ class Worker(MainLoopApplication):
     def getOpenglVersion(self):
         import subprocess
         import re
-        p = subprocess.Popen("glxinfo", stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        try:
+            p = subprocess.Popen("glxinfo", stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except OSError as e:
+            LOGGER.warning("Unable to retrieve OpenGL version: %s", str(e))
+            return
+
         output, errors = p.communicate()
         outputList = output.split("\n")
         for line in outputList:
