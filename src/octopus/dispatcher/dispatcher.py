@@ -35,6 +35,7 @@ from octopus.dispatcher.poolman.filepoolman import FilePoolManager
 from octopus.dispatcher.poolman.wspoolman import WebServicePoolManager
 from octopus.dispatcher.licenses.licensemanager import LicenseManager
 
+log = logging.getLogger('main.dispatcher')
 
 class Dispatcher(MainLoopApplication):
     '''The Dispatcher class is the core of the dispatcher application.
@@ -55,7 +56,6 @@ class Dispatcher(MainLoopApplication):
         return cls.instance
 
     def __init__(self, framework):
-        LOGGER = logging.getLogger('main.dispatcher')
         if self.init:
             return
         self.init = True
@@ -85,31 +85,31 @@ class Dispatcher(MainLoopApplication):
         rnsAlreadyInitialized = self.initPoolsDataFromBackend()
 
         if self.enablePuliDB and not self.cleanDB:
-            LOGGER.warning("--- Reloading database (9 steps) ---")
+            log.warning("--- Reloading database (9 steps) ---")
             prevTimer = time.time()
             self.pulidb.restoreStateFromDb(self.dispatchTree, rnsAlreadyInitialized)
 
-            LOGGER.warning("%d jobs reloaded from database" % len(self.dispatchTree.tasks))
-            LOGGER.warning("Total time elapsed %s" % elapsedTimeToString(prevTimer))
-            LOGGER.warning("")
+            log.warning("%d jobs reloaded from database" % len(self.dispatchTree.tasks))
+            log.warning("Total time elapsed %s" % elapsedTimeToString(prevTimer))
+            log.warning("")
 
-        LOGGER.warning("--- Checking dispatcher state (3 steps) ---")
+        log.warning("--- Checking dispatcher state (3 steps) ---")
         startTimer = time.time()
-        LOGGER.warning("1/3 Update completion and status")
+        log.warning("1/3 Update completion and status")
         self.dispatchTree.updateCompletionAndStatus()
-        LOGGER.warning("    Elapsed time %s" % elapsedTimeToString(startTimer))
+        log.warning("    Elapsed time %s" % elapsedTimeToString(startTimer))
 
         prevTimer = time.time()
-        LOGGER.warning("2/3 Update rendernodes")
+        log.warning("2/3 Update rendernodes")
         self.updateRenderNodes()
-        LOGGER.warning("    Elapsed time %s" % elapsedTimeToString(prevTimer))
+        log.warning("    Elapsed time %s" % elapsedTimeToString(prevTimer))
 
         prevTimer = time.time()
-        LOGGER.warning("3/3 Validate dependencies")
+        log.warning("3/3 Validate dependencies")
         self.dispatchTree.validateDependencies()
-        LOGGER.warning("    Elapsed time %s" % elapsedTimeToString(prevTimer))
-        LOGGER.warning("Total time elapsed %s" % elapsedTimeToString(startTimer))
-        LOGGER.warning("")
+        log.warning("    Elapsed time %s" % elapsedTimeToString(prevTimer))
+        log.warning("Total time elapsed %s" % elapsedTimeToString(startTimer))
+        log.warning("")
 
         if self.enablePuliDB and not self.cleanDB:
             self.dispatchTree.toModifyElements = []
@@ -118,14 +118,14 @@ class Dispatcher(MainLoopApplication):
         # When creating a pool with id=None, it is automatically appended in "toCreateElement" list in dispatcher and in the dispatcher's "pools" attribute
         if 'default' not in self.dispatchTree.pools:
             pool = Pool(None, name='default')
-            LOGGER.warning("Default pool was not loaded from DB, create a new default pool: %s" % pool)
+            log.warning("Default pool was not loaded from DB, create a new default pool: %s" % pool)
         self.defaultPool = self.dispatchTree.pools['default']
 
-        LOGGER.warning("--- Loading dispatch rules ---")
+        log.warning("--- Loading dispatch rules ---")
         startTimer = time.time()
         self.loadRules()
-        LOGGER.warning("Total time elapsed %s" % elapsedTimeToString(startTimer))
-        LOGGER.warning("")
+        log.warning("Total time elapsed %s" % elapsedTimeToString(startTimer))
+        log.warning("")
 
         # it should be better to have a maxsize
         self.queue = Queue(maxsize=10000)
@@ -222,7 +222,7 @@ class Dispatcher(MainLoopApplication):
         from .rules.graphview import GraphViewBuilder
         graphs = self.dispatchTree.findNodeByPath("/graphs", None)
         if graphs is None:
-            logging.getLogger('main.dispatcher').fatal("No '/graphs' node, impossible to load rule for /graphs.")
+            log.fatal("No '/graphs' node, impossible to load rule for /graphs.")
             self.stop()
         self.dispatchTree.rules.append(GraphViewBuilder(self.dispatchTree, graphs))
 
@@ -337,7 +337,7 @@ class Dispatcher(MainLoopApplication):
             self.pulidb.createElements(self.dispatchTree.toCreateElements)
             self.pulidb.updateElements(self.dispatchTree.toModifyElements)
             self.pulidb.archiveElements(self.dispatchTree.toArchiveElements)
-            # logging.getLogger('main.dispatcher').info("                UpdateDB: create=%d update=%d delete=%d" % (len(self.dispatchTree.toCreateElements), len(self.dispatchTree.toModifyElements), len(self.dispatchTree.toArchiveElements)) )
+            # log.info("                UpdateDB: create=%d update=%d delete=%d" % (len(self.dispatchTree.toCreateElements), len(self.dispatchTree.toModifyElements), len(self.dispatchTree.toArchiveElements)) )
         self.dispatchTree.resetDbElements()
 
     def computeAssignments(self):
@@ -382,18 +382,18 @@ class Dispatcher(MainLoopApplication):
             # the new maxRN value is calculated based on the number of active jobs of the pool, and the number of online rendernodes of the pool
             rnsNotOffline = set([rn for rn in pool.renderNodes if rn.status not in [RN_UNKNOWN, RN_PAUSED]])
             rnsSize = len(rnsNotOffline)
-            # LOGGER.debug("@   - nb rns awake:%r" % (rnsSize) )
+            # log.debug("@   - nb rns awake:%r" % (rnsSize) )
 
             # if we have a userdefined maxRN for some nodes, remove them from the list and substracts their maxRN from the pool's size
             l = nodesList[:]  # duplicate the list to be safe when removing elements
             for node in l:
-                # LOGGER.debug("@   - checking userDefMaxRN: %s -> %r maxRN=%d" % (node.name, node.poolShares.values()[0].userDefinedMaxRN, node.poolShares.values()[0].maxRN ) )
+                # log.debug("@   - checking userDefMaxRN: %s -> %r maxRN=%d" % (node.name, node.poolShares.values()[0].userDefinedMaxRN, node.poolShares.values()[0].maxRN ) )
                 if node.poolShares.values()[0].userDefinedMaxRN and node.poolShares.values()[0].maxRN not in [-1, 0]:
-                    # LOGGER.debug("@     removing: %s -> maxRN=%d" % (node.name, node.poolShares.values()[0].maxRN ) )
+                    # log.debug("@     removing: %s -> maxRN=%d" % (node.name, node.poolShares.values()[0].maxRN ) )
                     nodesList.remove(node)
                     rnsSize -= node.poolShares.values()[0].maxRN
 
-            # LOGGER.debug("@   - nb rns awake after maxRN:%d" % (rnsSize) )
+            # log.debug("@   - nb rns awake after maxRN:%d" % (rnsSize) )
 
             if len(nodesList) == 0:
                 continue
@@ -443,7 +443,7 @@ class Dispatcher(MainLoopApplication):
 
         if singletonconfig.get('CORE','GET_STATS'):
             singletonstats.theStats.assignmentTimers['update_max_rn'] = time.time() - prevTimer
-        LOGGER.info( "%8.2f ms --> .... updating max RN values", (time.time() - prevTimer)*1000 )
+        log.info( "%8.2f ms --> .... updating max RN values", (time.time() - prevTimer)*1000 )
 
         # now, we are treating every nodes
         # sort by id (fifo)
@@ -474,7 +474,7 @@ class Dispatcher(MainLoopApplication):
                 except NoRenderNodeAvailable:
                     pass
                 except NoLicenseAvailableForTask:
-                    LOGGER.info("Missing license for node \"%s\" (other commands can start anyway)." % entryPoint.name)
+                    log.info("Missing license for node \"%s\" (other commands can start anyway)." % entryPoint.name)
                     pass
 
         assignmentDict = collections.defaultdict(list)
@@ -483,7 +483,7 @@ class Dispatcher(MainLoopApplication):
 
         if singletonconfig.get('CORE','GET_STATS'):
             singletonstats.theStats.assignmentTimers['dispatch_command'] = time.time() - prevTimer
-        LOGGER.info( "%8.2f ms --> .... dispatching commands", (time.time() - prevTimer)*1000  )
+        log.info( "%8.2f ms --> .... dispatching commands", (time.time() - prevTimer)*1000  )
 
         #
         # Check replacements
@@ -552,12 +552,12 @@ class Dispatcher(MainLoopApplication):
                 try:
                     resp, data = rendernode.request("POST", "/commands/", body, headers)
                     if not resp.status == 202:
-                        logging.getLogger('main.dispatcher').error("Assignment request failed: command %d on worker %s", command.id, rendernode.name)
+                        log.error("Assignment request failed: command %d on worker %s", command.id, rendernode.name)
                         failures.append((rendernode, command))
                     else:
-                        logging.getLogger('main.dispatcher').info("Sent assignment of command %d to worker %s", command.id, rendernode.name)
+                        log.info("Sent assignment of command %d to worker %s", command.id, rendernode.name)
                 except rendernode.RequestFailed, e:
-                    logging.getLogger('main.dispatcher').error("Assignment of command %d to worker %s failed. Worker is likely dead (%r)", command.id, rendernode.name, e)
+                    log.error("Assignment of command %d to worker %s failed. Worker is likely dead (%r)", command.id, rendernode.name, e)
                     failures.append((rendernode, command))
             return failures
 
@@ -571,7 +571,7 @@ class Dispatcher(MainLoopApplication):
             rendernode.clearAssignment(command)
             command.clearAssignment()
 
-            logging.getLogger('main.dispatcher').info(" - assignment cleared: command[%r] on rn[%r]" % (command.id, rendernode.name))
+            log.info(" - assignment cleared: command[%r] on rn[%r]" % (command.id, rendernode.name))
 
     def handleNewGraphRequestApply(self, graph):
         '''Handles a graph submission request and closes the given ticket
@@ -580,7 +580,7 @@ class Dispatcher(MainLoopApplication):
         prevTimer = time.time()
         nodes = self.dispatchTree.registerNewGraph(graph)
 
-        logging.getLogger('main.dispatcher').info("%.2f ms --> graph registered" % ((time.time() - prevTimer) * 1000))
+        log.info("%.2f ms --> graph registered" % ((time.time() - prevTimer) * 1000))
         prevTimer = time.time()
 
         # handles the case of post job with paused status
@@ -591,10 +591,10 @@ class Dispatcher(MainLoopApplication):
             except KeyError:
                 continue
 
-        logging.getLogger('main.dispatcher').info("%.2f ms --> jobs set in pause if needed" % ((time.time() - prevTimer) * 1000))
+        log.info("%.2f ms --> jobs set in pause if needed" % ((time.time() - prevTimer) * 1000))
         prevTimer = time.time()
 
-        logging.getLogger('main.dispatcher').info('Added graph "%s" to the model.' % graph['name'])
+        log.info('Added graph "%s" to the model.' % graph['name'])
         return nodes
 
     def updateCommandApply(self, dct):
@@ -602,7 +602,6 @@ class Dispatcher(MainLoopApplication):
         Called from a RN with a json desc of a command (ie rendernode info, command info etc).
         Raise an execption to tell caller to send a HTTP404 response to RN, if not error a HTTP200 will be send instead
         '''
-        log = logging.getLogger('main.dispatcher')
         commandId = dct['id']
         renderNodeName = dct['renderNodeName']
 
