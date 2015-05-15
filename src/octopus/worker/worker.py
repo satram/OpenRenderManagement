@@ -319,7 +319,7 @@ class Worker(MainLoopApplication):
         infos['name'] = self.computerName
         infos['port'] = self.port
         infos['status'] = self.status
-        infos['pools'] = []
+        infos['pools'] = ['default']
         infos['speed'] = float(self.speed)
         return infos
 
