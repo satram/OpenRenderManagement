@@ -79,6 +79,7 @@ def process_args():
     parser.add_option("-u", "--run-as", action="store", type="string", dest="RUN_AS", metavar="USER", help="run the dispatcher as USER")
     parser.add_option("-D", "--debug", action="store_true", dest="DEBUG", help="changes the default log level to DEBUG")
     parser.add_option("-C", "--console", action="store_true", dest="CONSOLE", default=False, help="output logs to the console")
+    parser.add_option("--cleandb", action="store_true", dest="DB_CLEAN_DATA", default=False, help="clean database on launch")
     options, args = parser.parse_args()
 
     # override defaults with settings from file
