@@ -36,6 +36,7 @@ class TasksResource(DispatcherBaseResource):
         tasks = [task.to_json() for task in tasks.values()]
         data = {'tasks': tasks}
         body = json.dumps(data)
+        self.set_header('Content-Type', 'application/json')
         self.writeCallback(body)
 
 
@@ -82,6 +83,7 @@ class TaskResource(DispatcherBaseResource):
         task = self._findTask(taskID)
         odict = {'tasks': [task.to_json()]}
         body = json.dumps(odict)
+        self.set_header('Content-Type', 'application/json')
         self.writeCallback(body)
 
     def _findTask(self, taskId):
@@ -244,6 +246,7 @@ class TaskCommandResource(TaskResource):
         except TaskNotFoundError:
             return HTTPError(404, "No such task. Task %d was not found." % taskId)
         else:
+            self.set_header('Content-Type', 'application/json')
             self.writeCallback(body)
 
     def filteredTask(self, taskId, filterfunc):
@@ -273,6 +276,7 @@ class TaskTreeResource(TaskResource):
             if e.args[0][0] is TaskNotFoundError:
                 return HTTPError(404, "Task %d not found." % taskId)
         else:
+            self.set_header('Content-Type', 'application/json')
             self.writeCallback(data)
 
     def getSubTasks(self, rootTaskId):

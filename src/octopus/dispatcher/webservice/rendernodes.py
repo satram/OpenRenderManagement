@@ -40,6 +40,7 @@ class RenderNodesResource(DispatcherBaseResource):
         rendernodes = self.getDispatchTree().renderNodes.values()
         content = {'rendernodes': list(rendernode.to_json() for rendernode in rendernodes)}
         content = json.dumps(content)
+        self.set_header('Content-Type', 'application/json')
         self.writeCallback(content)
 
 
@@ -57,6 +58,7 @@ class RenderNodeResource(DispatcherBaseResource):
             return Http404("RenderNode not found")
         content = rendernode.to_json()
         content = json.dumps(content)
+        self.set_header('Content-Type', 'application/json')
         self.writeCallback(content)
 
     def post(self, computerName):

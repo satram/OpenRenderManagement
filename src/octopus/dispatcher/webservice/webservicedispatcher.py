@@ -176,6 +176,7 @@ class StatsResource(DispatcherBaseResource):
             'licenses': repr(self.dispatcher.licenseManager),
             'licensesDict': self.dispatcher.licenseManager.stats()
         }
+        self.set_header('Content-Type', 'application/json')
         self.writeCallback(stats)
 
 

@@ -55,6 +55,7 @@ if __name__ == '__main__':
 class NodesResource(DispatcherBaseResource):
     ##@queue
     def get(self):
+        self.set_header('Content-Type', 'application/json')
         self.writeCallback(self.getNode(0))
 
     def getNode(self, nodeId):
@@ -78,6 +79,7 @@ class NodesResource(DispatcherBaseResource):
 class NodeResource(NodesResource):
     ##@queue
     def get(self, nodeId):
+        self.set_header('Content-Type', 'application/json')
         self.writeCallback(self.getNode(nodeId))
 
 
