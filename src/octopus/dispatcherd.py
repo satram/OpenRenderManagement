@@ -85,6 +85,10 @@ def process_args():
     # override defaults with settings from file
     if args:
         settings.loadSettingsFile(args[0])
+
+    # load ini config after a reload of settings.py
+    singletonconfig.load(settings.CONFDIR + "/config.ini")
+
     # override settings with options
     for setting in dir(settings):
         if hasattr(options, setting) and getattr(options, setting) is not None:
