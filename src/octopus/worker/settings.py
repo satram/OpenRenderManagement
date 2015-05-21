@@ -37,11 +37,12 @@ def loadSettingsFile(filename):
     globals().update(settings)
 
 
-fqdn = socket.getfqdn(socket.gethostname())
-if "." in fqdn:
-    computername, domain = fqdn.split(".", 1)
-else:
-    computername = fqdn
+compname = socket.gethostbyname(socket.gethostname())
+computername = string.replace(compname, ".", "_")
+# if "." in fqdn:
+#     computername, domain = fqdn.split(".", 1)
+# else:
+#     computername = fqdn
 
 
 ## SETTINGS ###########################################################
