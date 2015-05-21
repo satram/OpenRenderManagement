@@ -41,7 +41,7 @@ def loadSettingsFile(filename):
 
 #compname = socket.gethostbyname(socket.gethostname())
 compipaddress = netifaces.ifaddresses('enp0s8')[2][0]['addr']
-computername = string.replace(compname, '.', '_')
+computername = string.replace(compipaddress, '.', '_')
 # if "." in fqdn:
 #     computername, domain = fqdn.split(".", 1)
 # else:
