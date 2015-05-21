@@ -3,6 +3,7 @@
 
 from __future__ import absolute_import
 import string
+import netifaces
 
 """
 name: settings.py
@@ -38,7 +39,8 @@ def loadSettingsFile(filename):
     globals().update(settings)
 
 
-compname = socket.gethostbyname(socket.gethostname())
+#compname = socket.gethostbyname(socket.gethostname())
+compipaddress = netifaces.ifaddresses('enp0s8')[2][0]['addr']
 computername = string.replace(compname, '.', '_')
 # if "." in fqdn:
 #     computername, domain = fqdn.split(".", 1)
