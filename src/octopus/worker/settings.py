@@ -2,6 +2,7 @@
 # -*- coding: utf8 -*-
 
 from __future__ import absolute_import
+import string
 
 """
 name: settings.py
@@ -38,7 +39,7 @@ def loadSettingsFile(filename):
 
 
 compname = socket.gethostbyname(socket.gethostname())
-computername = string.replace(compname, ".", "_")
+computername = string.replace(compname, '.', '_')
 # if "." in fqdn:
 #     computername, domain = fqdn.split(".", 1)
 # else:
