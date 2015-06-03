@@ -839,6 +839,7 @@ class Graph(object):
         print "Sending graph: %s:%r" % (host, port)
         print("---------------------")
         jsonRepr = json.dumps(repr)
+        print(jsonRepr)
 
         conn = httplib.HTTPConnection(host, port)
         conn.request(
