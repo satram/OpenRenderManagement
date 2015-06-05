@@ -2,6 +2,7 @@ import socket
 import httplib as http
 import time
 import logging
+import requests
 
 # def connect(self):
 #     """Connect to the host and port specified in __init__."""
@@ -62,6 +63,23 @@ class RequestManager(object):
                 rdata = r.read()
                 conn.close()
                 break
+                # url = 'http://' + self.host + ':'+ self.port + path
+                # print method
+                # print url
+                # print data
+                # print headers
+                # if method == "POST":
+                #     response = requests.post(url, data=data, params=headers)
+                # elif method == "PUT":
+                #     response = requests.put(url, data=data, params=headers)
+                # elif method == "GET":
+                #     response = requests.get(url)
+                # elif method == "DELETE":
+                #     response = requests.delete(url, data=data, params=headers)
+                # if response.status_code not in (200, 201, 202, 303):
+                #     raise self.RequestError(response.text + " for request %s %s" % (method, path), response.status_code)
+                # rdata = response.content
+                # break
             except socket.error, e:
                 logger.error("Warning: a socket error occured in requestmanager '%s %s'" % (method, path))
                 try:

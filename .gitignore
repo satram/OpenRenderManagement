@@ -29,3 +29,6 @@ Puli/src/psutil
 Puli/src/puliclient/contrib
 
 src/puliclient/contrib
+.project
+.pydevproject
+__LOGDIR_PLACEHOLDER__
