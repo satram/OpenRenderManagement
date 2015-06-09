@@ -259,6 +259,7 @@ class DefaultCommandRunner(CommandRunner):
     start = IntegerParameter(default=1)
     end = IntegerParameter(default=1)
     timeout = IntegerParameter(default=0, min=0)
+    zeropad = IntegerParameter(default=0)
 
     def execute(self, arguments, updateCompletion, updateMessage, updateStats, updateLicense):
         '''
@@ -290,6 +291,7 @@ class DefaultCommandRunner(CommandRunner):
         start = arguments.get('start')
         end = arguments.get('end')
         timeout = arguments.get('timeout', None)
+        zeropad = arguments.get('zeropad')
 
         updateCompletion(0)
 
@@ -299,9 +301,9 @@ class DefaultCommandRunner(CommandRunner):
         for frame in range(start, end + 1):
             self.log.info("==== Frame %d ====" % frame)
 
-            currCommand = cmd.replace("%%MI_FRAME%%", str(frame))
-            currCommand = currCommand.replace("%%MI_START%%", str(start))
-            currCommand = currCommand.replace("%%MI_END%%", str(end))
+            currCommand = cmd.replace("%%MI_FRAME%%", str(frame).zfill(zeropad))
+            currCommand = currCommand.replace("%%MI_START%%", str(start).zfill(zeropad))
+            currCommand = currCommand.replace("%%MI_END%%", str(end).zfill(zeropad))
 
             self.log.info("Command: %s" % currCommand)
             subprocess.check_call(currCommand, close_fds=True, shell=True)
